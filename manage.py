@@ -8,17 +8,12 @@ parser.add_argument('command', metavar="cmd", type=str, help='command to manage 
 
 args = parser.parse_args()
 
-#Kullanıcı(kullanici_id,kullanici_adi,sifre,kullanici_type)
-#Sınav(sınav_id,ogretmen_id,sinav_adi,sınav_baslama,sınav_bitis)
-#Ogrenci_Sınav(ogrenci_id,sinav_id,ogrenci_dogru_sayı,ogrenci_yanlis_sayı,ogrenci_puan)
-#Soru(Soru_id,soru_sınav_id,soru_metni,soru_siklari,soru_dogru_cevap,soru_puanı)
-#Ogrenci_Soru(ogrenci_id,soru_id,verilen_cevap,aldigi_puan)
 
 def create_database():
     db = Database()
     with db.get_cursor() as cursor:
         cursor.execute("CREATE TABLE Kullanici (kullanici_id serial PRIMARY KEY,kullanici_adi VARCHAR(50) NOT NULL,kullanici_sifre VARCHAR(50) NOT NULL,kullanici_tipi VARCHAR(50) NOT NULL);")
-        cursor.execute("CREATE TABLE Sinav(sinav_id serial PRIMARY KEY,ogretmen_id INTEGER NOT NULL,sinav_adi VARCHAR(50) NOT NULL,sinav_baslama_tarihi timestamp  NOT NULL,sinav_bitis_tarihi timestamp NOT NULL,FOREIGN KEY (ogretmen_id) REFERENCES Kullanici(kullanici_id));")
+        cursor.execute("CREATE TABLE Sinav(sinav_id serial PRIMARY KEY,sinav_adi VARCHAR(50) NOT NULL,sinav_baslama_tarihi timestamp  NOT NULL,sinav_bitis_tarihi timestamp NOT NULL);")
         cursor.execute("CREATE TABLE Soru(soru_id serial PRIMARY KEY,soru_sinav_id INTEGER NOT NULL,soru_metni VARCHAR(100000) NOT NULL,soru_siklari VARCHAR(100000) NOT NULL,soru_dogru_cevap CHAR(1) NOT NULL,soru_puani INTEGER NOT NULL,FOREIGN KEY(soru_sinav_id) REFERENCES Sinav(sinav_id));")
         cursor.execute("CREATE TABLE Ogrenci_Soru(ogrenci_id INTEGER,soru_id INTEGER ,verilen_cevap CHAR(1) NOT NULL,aldigi_puan INTEGER NOT NULL,PRIMARY KEY(ogrenci_id,soru_id),FOREIGN KEY(ogrenci_id) REFERENCES Kullanici(kullanici_id),FOREIGN KEY (soru_id) REFERENCES Soru(soru_id));")
         cursor.execute("CREATE TABLE Ogrenci_Sinav(ogrenci_id INTEGER,sinav_id INTEGER,ogrenci_sinav_bitis_tarihi timestamp NOT NULL,dogru_sayi INTEGER NOT NULL ,yanlis_cevap INTEGER NOT NULL ,puan INTEGER NOT NULL,PRIMARY KEY(ogrenci_id,sinav_id),FOREIGN KEY(ogrenci_id) REFERENCES Kullanici(kullanici_id),FOREIGN KEY(sinav_id) REFERENCES Sinav(sinav_id));")
@@ -40,11 +35,12 @@ def fill_database():
 def drop_database():
     db = Database()
     with db.get_cursor() as cursor:
-        cursor.execute("DROP TABLE IF EXISTS Kullanici;")
-        cursor.execute("DROP TABLE IF EXISTS Sinav;")
-        cursor.execute("DROP TABLE IF EXISTS Soru;")
         cursor.execute("DROP TABLE IF EXISTS Ogrenci_Soru;")
         cursor.execute("DROP TABLE IF EXISTS Ogrenci_Sinav;")
+        cursor.execute("DROP TABLE IF EXISTS Soru;")
+        cursor.execute("DROP TABLE IF EXISTS Sinav;")
+        cursor.execute("DROP TABLE IF EXISTS Kullanici;")
+        print("done")
     db.commit()
     print("Finished dropping tables")
 
