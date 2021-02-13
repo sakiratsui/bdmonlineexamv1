@@ -1,5 +1,4 @@
 import sys
-
 import flask_login
 import uuid
 from flask import Flask, request, render_template, redirect, url_for, jsonify, json
