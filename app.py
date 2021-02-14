@@ -100,11 +100,11 @@ def show_exams():
         createdexams.append(exams[-1])
         print(createdexams, sys.stdout.flush())
     # Sınav(sınav_id,sinav_adi,sınav_baslama,sınav_bitis)
-    db = Database()
-    with db.get_cursor() as cursor:
-        cursor.execute("INSERT INTO Sinav(sinav_adi,sinav_baslama_tarihi,sinav_bitis_tarihi) VALUES (%s, %s,%s);",
+        db = Database()
+        with db.get_cursor() as cursor:
+            cursor.execute("INSERT INTO Sinav(sinav_adi,sinav_baslama_tarihi,sinav_bitis_tarihi) VALUES (%s, %s,%s);",
                        (exams[-1][0], exams[-1][1], exams[-1][2]))
-    db.commit()
+        db.commit()
     return render_template("exams.html", user_type="Ogretmen", exam=createdexams)
 
 
