@@ -56,9 +56,9 @@ def login():
 def logon():
     name = request.form.get("name")
     if request.form.get("password") == users[name]["password"]:
-        usr = User()
-        usr.id = name
-        flask_login.login_user(usr)
+        #usr = User()
+        #usr.id = name
+        #flask_login.login_user(usr)
         return redirect(url_for("show_exams"))
     # bu değerler db'de bir veriyle eşleşirse home'a gidilir.
     # else return login again?
