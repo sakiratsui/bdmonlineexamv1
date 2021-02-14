@@ -49,7 +49,7 @@ def logon():
             if request.form.get("password") == str(row[2]):
                 #usrnm = name
                 usertype = str(row[3])
-                return redirect(url_for("exams.html", user_type=usertype, exam=createdexams))
+                return render_template("exams.html", user_type=usertype, exam=createdexams)
             else:
                 return "<script> alert('Wrong username or password!'); </script>" + render_template("home.html")
     # bu değerler db'de bir veriyle eşleşirse home'a gidilir.
