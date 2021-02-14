@@ -102,7 +102,7 @@ def leaderboard():
 @app.route("/logout")
 #@login_required
 def logout():
-    flask_login.logout_user()
+    #flask_login.logout_user()
     return redirect(url_for("login"))
 
 
