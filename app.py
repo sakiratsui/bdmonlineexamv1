@@ -79,12 +79,12 @@ def logon():
         rows = cursor.fetchall()
         for row in rows:
             if request.form.get("password") == str(row[2]):
-                #usr = User()
-                #usr.username = name
+                usr = User()
+                usr.username = name
                 #usr.password = row[2]
                 #usr.usertype = row[3]
                 #flask_login.login_user(usr)
-                return render_template("exams.html", user_type="Ogretmen", exam=createdexams)
+                return redirect(url_for("exams.html", user_type=, exam=createdexams, **request.args))
             else:
                 return "<script> alert('Wrong username or password!'); </script>" + render_template("home.html")
     # bu değerler db'de bir veriyle eşleşirse home'a gidilir.
