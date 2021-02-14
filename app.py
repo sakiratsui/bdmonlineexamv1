@@ -57,7 +57,7 @@ def logon():
 
 
 @app.route("/exams", methods=["GET", "POST"])
-@login_required
+#@login_required
 def show_exams():
     if request.method == "POST":
         examdetails = json.loads(request.data)
@@ -74,13 +74,13 @@ def show_exams():
 
 
 @app.route("/createexam")
-@login_required
+#@login_required
 def create_exam():
     return render_template("createexam.html")
 
 
 @app.route("/createexam/p=2")
-@login_required
+#@login_required
 def exampagetwo():
     examname = request.args.get("examname")
     start = request.args.get("examstart")
@@ -100,7 +100,7 @@ def leaderboard():
 
 
 @app.route("/logout")
-@login_required
+#@login_required
 def logout():
     flask_login.logout_user()
     return redirect(url_for("login"))
