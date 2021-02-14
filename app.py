@@ -80,7 +80,7 @@ def logon():
         for row in rows:
             if request.form.get("password") == str(row[2]):
                 usr = User()
-                usr.username = name
+                usr.id = name
                 #usr.password = row[2]
                 usr.usertype = row[3]
                 #flask_login.login_user(usr)
