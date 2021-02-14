@@ -79,8 +79,8 @@ def logon():
         rows = cursor.fetchall()
         for row in rows:
             if request.form.get("password") == str(row[2]):
-                usr = User()
-                usr.username = str(row[1])
+                #usr = User()
+                #usr.username = name
                 #usr.password = row[2]
                 #usr.usertype = row[3]
                 #flask_login.login_user(usr)
@@ -109,13 +109,13 @@ def show_exams():
 
 
 @app.route("/createexam")
-#@login_required
+@login_required
 def create_exam():
     return render_template("createexam.html")
 
 
 @app.route("/createexam/p=2")
-#@login_required
+@login_required
 def exampagetwo():
     examname = request.args.get("examname")
     start = request.args.get("examstart")
