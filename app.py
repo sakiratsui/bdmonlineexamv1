@@ -1,43 +1,61 @@
 import sys
+
 import flask_login
 import uuid
 from flask import Flask, request, render_template, redirect, url_for, jsonify, json
 from flask_login import LoginManager, login_required, current_user
+from psycopg2._psycopg import cursor
 
+from database import Database
 
 login_manager = LoginManager()
-app = Flask(__name__)
 
-users = {'sakiratsui': {'password': 'secret'}, 'dogukan': {'password': '1234'}}
+app = Flask(__name__)
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+#users = {'sakiratsui': {'password': 'secret'}, 'dogukan': {'password': '1234'}}
+
 exams = []
-createdexams=[] #tıklandıktan sonra kaydedilmeleri için
+createdexams = []  # tıklandıktan sonra kaydedilmeleri için
 
 
 # db'den çekilecek
 
 class User(flask_login.UserMixin):
-    pass
+    def __init__(self, username, password, usertype):
+        self.username = username
+        self.password = password
+        self.usertype = usertype
 
 
 @login_manager.user_loader
 def user_loader(username):
-    if username not in users:
-        return "bad request"
+    db = Database()
+    with db.get_cursor() as cursor:
+        cursor.execute("SELECT * FROM Kullanici WHERE kullanici_adi= %s", (username,))
+        rows = cursor.fetchall()
+        if username not in rows:
+            return "bad request"
 
-    user = User()
-    user.id = username
+        user = User()
+        user.username = username
     return user
 
 
 @login_manager.request_loader
 def request_loader(request):
     name = request.form.get('name')
-    if name not in users:
-        return "bad request"
+    db = Database()
+    with db.get_cursor() as cursor:
+        cursor.execute("SELECT * FROM Kullanici WHERE kullanici_adi= %s", (name,))
+        rows = cursor.fetchall()
+        if name not in rows:
+            return "bad request"
 
-    user = User()
-    user.id = name
-    user.is_authenticated = request.form['password'] == users[name]['password']
+        user = User()
+        user.username = name
+        user.is_authenticated = request.form['password'] == rows[2]
 
     return user
 
@@ -55,15 +73,21 @@ def login():
 @app.route("/home", methods=["POST"])
 def logon():
     name = request.form.get("name")
-    if request.form.get("password") == users[name]["password"]:
-        #usr = User()
-        #usr.id = name
-        #flask_login.login_user(usr)
-        return redirect(url_for("show_exams"))
+    db = Database()
+    with db.get_cursor() as cursor:
+        cursor.execute("SELECT * FROM Kullanici WHERE kullanici_adi= %s", (name,))
+        rows = cursor.fetchall()
+        for row in rows:
+            if request.form.get("password") == str(row[2]):
+                #usr = User()
+                #usr.username = name
+                #usr.usertype = row[3]
+                #flask_login.login_user(usr)
+                return "success"
+            else:
+                return "<script> alert('Wrong username or password!'); </script>" + render_template("home.html")
     # bu değerler db'de bir veriyle eşleşirse home'a gidilir.
     # else return login again?
-    else:
-        return "<script> alert('Wrong username or password!'); </script>" + render_template("home.html")
 
 
 @app.route("/exams", methods=["GET", "POST"])
@@ -71,13 +95,16 @@ def logon():
 def show_exams():
     if request.method == "POST":
         examdetails = json.loads(request.data)
-        # sınav detayları ve adı tarihi db'ye kaydedilecek
+        # created exams ve exam details parse edilip eklenecek
         createdexams.append(exams[-1])
         print(createdexams, sys.stdout.flush())
-        print(uuid.uuid4(), sys.stdout.flush()) #sınavın unique id'si
-    user_type = "öğretmen"  # db'den kullanıcının user type'ı check edilmeli
-    return render_template("exams.html", user_type=user_type, exam=createdexams)
-    #exam değeri db'den alınacak?
+    # Sınav(sınav_id,sinav_adi,sınav_baslama,sınav_bitis)
+    db = Database()
+    with db.get_cursor() as cursor:
+        cursor.execute("INSERT INTO Sinav(sinav_adi,sinav_baslama_tarihi,sinav_bitis_tarihi) VALUES (%s, %s,%s);",
+                       (exams[-1][0], exams[-1][1], exams[-1][2]))
+    db.commit()
+    return render_template("exams.html", user_type=current_user.kullanici_tipi, exam=createdexams)
 
 
 @app.route("/createexam")
@@ -93,7 +120,6 @@ def exampagetwo():
     start = request.args.get("examstart")
     end = request.args.get("examend")
     exams.append([examname, start, end])
-    # alınan değerler db'ye kaydedilecek!
     return render_template("pagetwo.html", examname=examname, start=start, end=end)
 
 
@@ -116,6 +142,5 @@ def logout():
 
 if __name__ == '__main__':
     app.secret_key = 'j1i5ek0eeg+lb0uj^rvm)d1a@qvz^l&1(ep8f54n(oe+uc6s)4'
-    login_manager.init_app(app)
 
     app.run(debug=True)
