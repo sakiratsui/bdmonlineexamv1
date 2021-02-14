@@ -83,7 +83,7 @@ def logon():
                 #usr.username = name
                 #usr.usertype = row[3]
                 #flask_login.login_user(usr)
-                return "success"
+                return redirect(url_for("show_exams"));
             else:
                 return "<script> alert('Wrong username or password!'); </script>" + render_template("home.html")
     # bu değerler db'de bir veriyle eşleşirse home'a gidilir.
@@ -104,7 +104,7 @@ def show_exams():
         cursor.execute("INSERT INTO Sinav(sinav_adi,sinav_baslama_tarihi,sinav_bitis_tarihi) VALUES (%s, %s,%s);",
                        (exams[-1][0], exams[-1][1], exams[-1][2]))
     db.commit()
-    return render_template("exams.html", user_type=current_user.kullanici_tipi, exam=createdexams)
+    return render_template("exams.html", user_type="Ogretmen", exam=createdexams)
 
 
 @app.route("/createexam")
