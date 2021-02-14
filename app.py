@@ -3,16 +3,14 @@ import sys
 import flask_login
 import uuid
 from flask import Flask, request, render_template, redirect, url_for, jsonify, json
-from flask_login import LoginManager, login_required, current_user
+from flask_login import login_required
 from psycopg2._psycopg import cursor
 
 from database import Database
 
-login_manager = LoginManager()
 
 app = Flask(__name__)
-login_manager.init_app(app)
-login_manager.login_view = 'login'
+
 
 #users = {'sakiratsui': {'password': 'secret'}, 'dogukan': {'password': '1234'}}
 
@@ -28,36 +26,6 @@ class User(flask_login.UserMixin):
         self.password = password
         self.usertype = usertype
 
-
-@login_manager.user_loader
-def user_loader(username):
-    db = Database()
-    with db.get_cursor() as cursor:
-        cursor.execute("SELECT * FROM Kullanici WHERE kullanici_adi= %s", (username,))
-        rows = cursor.fetchall()
-        if username not in rows:
-            return "bad request"
-
-        user = User()
-        user.username = username
-    return user
-
-
-@login_manager.request_loader
-def request_loader(request):
-    name = request.form.get('name')
-    db = Database()
-    with db.get_cursor() as cursor:
-        cursor.execute("SELECT * FROM Kullanici WHERE kullanici_adi= %s", (name,))
-        rows = cursor.fetchall()
-        if name not in rows:
-            return "bad request"
-
-        user = User()
-        user.username = name
-        user.is_authenticated = request.form['password'] == rows[2]
-
-    return user
 
 
 @app.route("/")
@@ -81,7 +49,7 @@ def logon():
             if request.form.get("password") == str(row[2]):
                 #usrnm = name
                 usertype = str(row[3])
-                return redirect(url_for("exams.html", user_type=usertype, exam=createdexams, **request.args))
+                return redirect(url_for("exams.html", user_type=usertype, exam=createdexams))
             else:
                 return "<script> alert('Wrong username or password!'); </script>" + render_template("home.html")
     # bu değerler db'de bir veriyle eşleşirse home'a gidilir.
