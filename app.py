@@ -79,11 +79,8 @@ def logon():
         rows = cursor.fetchall()
         for row in rows:
             if request.form.get("password") == str(row[2]):
-                usr = User()
-                usr.id = name
-                #usr.password = row[2]
-                usr.usertype = row[3]
-                #flask_login.login_user(usr)
+                usr = User(name, row[2], row[3])
+                flask_login.login_user(usr)
                 return redirect(url_for("exams.html", user_type=usr.usertype, exam=createdexams, **request.args))
             else:
                 return "<script> alert('Wrong username or password!'); </script>" + render_template("home.html")
