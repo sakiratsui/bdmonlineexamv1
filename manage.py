@@ -51,7 +51,7 @@ def fill_database():
         cursor.execute("INSERT INTO Ogrenci_Sinav (ogrenci_id,sinav_id,ogrenci_sinav_bitis_tarihi, dogru_sayi, yanlis_cevap, puan) VALUES (1, 1, '2020-10-19 10:23:54', 8, 2)")
         cursor.execute("INSERT INTO Ogrenci_Sinav (ogrenci_id,sinav_id,ogrenci_sinav_bitis_tarihi, dogru_sayi, yanlis_cevap, puan) VALUES (1, 2, '2020-10-20 10:33:44', 15, 0)")
     db.commit()
-    print("Inserted 6 rows of data")
+    print("Inserted 4 rows of data")
 
 
 def drop_database():
@@ -117,6 +117,17 @@ def getQuestion(exam_id):
             liste.append(soru_information)
     return liste
 
+
+def getLeaderboardFromDatabase():
+    db = Database()
+    leaderboardlist =[]
+    with db.get_cursor() as cursor:
+        cursor.execute("SELECT * FROM Ogrenci_Sinav")
+        rows = cursor.fetchall()
+        for row in rows:
+            ogrenci_information = [row[0], row[1], row[2], row[3], row[4], row[5]]
+            leaderboardlist.append(ogrenci_information)
+    return leaderboardlist
 
 if args.command == "init":
     if path.exists("initialized.txt"):
