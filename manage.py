@@ -48,8 +48,8 @@ def fill_database():
                        ("batuayyildiz", "static", "Ogrenci"))
         cursor.execute("INSERT INTO Kullanici (kullanici_adi,kullanici_sifre,kullanici_tipi) VALUES (%s, %s, %s);",
                        ("hasanbulut", "bulutbilisim", "Ogretmen"))
-        cursor.execute("INSERT INTO Ogrenci_Sinav (ogrenci_id,sinav_id,ogrenci_sinav_bitis_tarihi, dogru_sayi, yanlis_cevap, puan) VALUES (1, 1, '2020-10-19 10:23:54', 8, 2)")
-        cursor.execute("INSERT INTO Ogrenci_Sinav (ogrenci_id,sinav_id,ogrenci_sinav_bitis_tarihi, dogru_sayi, yanlis_cevap, puan) VALUES (1, 2, '2020-10-20 10:33:44', 15, 0)")
+        cursor.execute("INSERT INTO Ogrenci_Sinav (ogrenci_id,sinav_id,ogrenci_sinav_bitis_tarihi, dogru_sayi, yanlis_cevap, puan) VALUES (1, 1, '2020-10-19 10:23:54', 8, 2,80)")
+        cursor.execute("INSERT INTO Ogrenci_Sinav (ogrenci_id,sinav_id,ogrenci_sinav_bitis_tarihi, dogru_sayi, yanlis_cevap, puan) VALUES (1, 2, '2020-10-20 10:33:44', 15, 0, 100)")
     db.commit()
     print("Inserted 4 rows of data")
 
