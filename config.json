@@ -1,6 +1,6 @@
 {
     "database": {
-        "host": "http://cloudexamproject.azurewebsites.net",
+        "host": "onlineexamcloudbdmpostgre.postgres.database.azure.com",
         "dbname": "postgres",
         "user": "mgselen",
         "password": "Gmse9599*",
